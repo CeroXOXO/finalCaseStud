@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { Bell, Menu } from 'react-feather';
+import { Bell, Menu, Settings as SettingsIcon, HelpCircle } from 'react-feather';
 import axios from 'axios';
 
 const Navigation = ({ user, onLogout }) => {
@@ -9,7 +9,6 @@ const Navigation = ({ user, onLogout }) => {
   const [hasNew, setHasNew] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  // Fetch notifications every 5s
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -30,42 +29,25 @@ const Navigation = ({ user, onLogout }) => {
   }, [notifications.length]);
 
   const toggleModal = () => {
-    setShowModal(m => !m);
+    setShowModal((m) => !m);
     setHasNew(false);
   };
 
   return (
     <div className="container-fluid">
       <div className="row">
-
         {/* Sidebar */}
-        <nav
-          className="col-12 col-lg-2 collapse d-lg-block bg-primary vh-100 text-white p-3 position-fixed"
-          id="sidebar"
-        >
-          <div className="d-flex justify-content-between align-items-center">
-            <h5 className="fw-bold">Kuya Koy's PMS</h5>
-            {/* Close Sidebar Button */}
-            <button
-              className="btn btn-sm btn-outline-light d-lg-none"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#sidebar"
-              aria-controls="sidebar"
-              aria-expanded="true"
-              aria-label="Close Sidebar"
-            >
-              &times;
-            </button>
+        <nav className="col-12 col-lg-2 bg-primary text-white p-3 position-fixed vh-100 d-flex flex-column" id="sidebar">
+          <div>
+            <h5 className="fw-bold">Klick Inc.</h5>
+            <div className="mb-4">Hi, <strong>{user?.name}</strong></div>
           </div>
 
-          <ul className="nav flex-column mt-4">
+          <ul className="nav flex-column mb-4">
             <li className="nav-item mb-2">
               <Link
                 to="/"
-                className={`nav-link ${
-                  location.pathname === '/' ? 'active text-white bg-white bg-opacity-25 rounded' : 'text-white'
-                }`}
+                className={`nav-link ${location.pathname === '/' ? 'active text-white bg-white bg-opacity-25 rounded' : 'text-white'}`}
               >
                 Dashboard
               </Link>
@@ -73,24 +55,41 @@ const Navigation = ({ user, onLogout }) => {
             <li className="nav-item mb-2">
               <Link
                 to="/projects"
-                className={`nav-link ${
-                  location.pathname.startsWith('/projects') ? 'active text-white bg-white bg-opacity-25 rounded' : 'text-white'
-                }`}
+                className={`nav-link ${location.pathname.startsWith('/projects') ? 'active text-white bg-white bg-opacity-25 rounded' : 'text-white'}`}
               >
-                Projects
+                Project Management
+              </Link>
+            </li>
+            <li className="nav-item mb-2">
+              <Link
+                to="/support"
+                className={`nav-link ${location.pathname === '/support' ? 'active text-white bg-white bg-opacity-25 rounded' : 'text-white'}`}
+              >
+         
+                Support
+              </Link>
+            </li>
+            <li className="nav-item mb-2">
+              <Link
+                to="/settings"
+                className={`nav-link ${location.pathname === '/settings' ? 'active text-white bg-white bg-opacity-25 rounded' : 'text-white'}`}
+              >
+   
+                Settings
               </Link>
             </li>
           </ul>
+
           <div className="mt-auto">
             <button
-              className="btn btn-outline-light w-100 mb-3 d-flex align-items-center justify-content-center"
+              className="btn btn-outline-light w-100 mb-2 d-flex align-items-center justify-content-center"
               onClick={toggleModal}
             >
               <Bell />
               {hasNew && <span className="badge bg-danger ms-2">!</span>}
               <span className="ms-2">Activity</span>
             </button>
-            <div className="text-center mb-2">Hi, <strong>{user?.name}</strong></div>
+
             <button className="btn btn-light w-100" onClick={onLogout}>
               Logout
             </button>
@@ -99,8 +98,6 @@ const Navigation = ({ user, onLogout }) => {
 
         {/* Main content */}
         <div className="col-12 col-lg-10 offset-lg-2 p-3">
-
-          {/* Mobile menu toggle */}
           <button
             className="btn btn-primary mb-3 d-lg-none"
             type="button"
@@ -111,7 +108,6 @@ const Navigation = ({ user, onLogout }) => {
             <Menu />
           </button>
 
-          {/* Your routed pages will render here */}
           <Outlet />
         </div>
       </div>
@@ -119,10 +115,7 @@ const Navigation = ({ user, onLogout }) => {
       {/* Notification Modal */}
       {showModal && (
         <div className="modal show fade d-block" tabIndex="-1" onClick={toggleModal}>
-          <div
-            className="modal-dialog modal-dialog-scrollable"
-            onClick={e => e.stopPropagation()}
-          >
+          <div className="modal-dialog modal-dialog-scrollable" onClick={(e) => e.stopPropagation()}>
             <div className="modal-content">
               <div className="modal-header bg-primary text-white">
                 <h5 className="modal-title">Recent Activity</h5>
@@ -133,7 +126,7 @@ const Navigation = ({ user, onLogout }) => {
                   <p>No recent activity.</p>
                 ) : (
                   <ul className="list-group">
-                    {notifications.map(act => (
+                    {notifications.map((act) => (
                       <li key={act.id} className="list-group-item">
                         <strong>{act.user?.name || 'Unknown'}</strong>: {act.description}
                         <br />

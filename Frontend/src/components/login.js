@@ -31,59 +31,67 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className="container d-flex align-items-center justify-content-center min-vh-100">
+    <div
+      className="d-flex align-items-center justify-content-center min-vh-100"
+      style={{
+        background: "linear-gradient(to right, #0d47a1, #1976d2)",
+      }}
+    >
       <div
-        className="card p-4 shadow-sm"
-        style={{ maxWidth: "400px", width: "100%" }}
+        className="bg-white shadow-lg rounded-4 p-4"
+        style={{
+          maxWidth: "400px",
+          width: "100%",
+        }}
       >
-        <h3 className="text-center mb-3">Welcome Back</h3>
-        <p className="text-center text-muted mb-4">Log in to your account</p>
+        <div className="text-center mb-4">
+          <h2 className="fw-bold text-primary">Klick Inc.</h2>
+
+        </div>
 
         {error && <div className="alert alert-danger">{error}</div>}
 
         <form onSubmit={handleLogin}>
           <div className="mb-3">
-            <label>Email address</label>
+            <label className="form-label">Email</label>
             <input
               type="email"
-              className="form-control"
+              className="form-control rounded-3"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter email"
               required
             />
           </div>
           <div className="mb-3">
-            <label>Password</label>
+            <label className="form-label">Password</label>
             <input
               type="password"
-              className="form-control"
+              className="form-control rounded-3"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password"
               required
             />
           </div>
 
-          <div className="d-flex justify-content-between mb-3">
+          <div className="d-flex justify-content-between align-items-center mb-3">
             <div className="form-check">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                id="remember"
-              />
+              <input type="checkbox" className="form-check-input" id="remember" />
               <label className="form-check-label" htmlFor="remember">
                 Remember me
               </label>
             </div>
             <button
               type="button"
-              className="btn btn-link p-0"
+              className="btn btn-link text-primary p-0"
               onClick={() => alert("Coming soon")}
             >
               Forgot password?
             </button>
           </div>
 
-          <button type="submit" className="btn btn-primary w-100 mb-2">
+          <button type="submit" className="btn btn-primary w-100 rounded-3 mb-3">
             Login
           </button>
 
@@ -91,7 +99,7 @@ const Login = ({ onLogin }) => {
 
           <button
             type="button"
-            className="btn btn-outline-secondary w-100"
+            className="btn btn-outline-primary w-100 rounded-3"
             onClick={() => navigate("/register")}
           >
             Create New Account

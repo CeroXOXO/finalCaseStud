@@ -14,6 +14,7 @@ const TaskDetail = () => {
   const [file, setFile] = useState(null);
   const [files, setFiles] = useState([]);
   const [fileError, setFileError] = useState(null);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -36,6 +37,20 @@ const TaskDetail = () => {
     };
 
     fetchTask();
+
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:8000/api/user", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUser(res.data);
+      } catch (err) {
+        console.error("Failed to fetch user");
+      }
+    };
+
+    fetchUser();
 
     const fetchFiles = async () => {
       try {
@@ -88,6 +103,9 @@ const TaskDetail = () => {
       setTask({ ...task, status: newStatus });
     } catch (err) {
       setError("Failed to update task status");
+      setTimeout(() => {
+        navigate(-1);
+      }, 2000);
     }
   };
 
@@ -212,7 +230,7 @@ const TaskDetail = () => {
   if (!task) return <div>Task not found</div>;
 
   return (
-    <div className="task-detail">
+    <div className="task-detail" style={{ marginLeft: '190px', padding: '1px' }}>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>{task.title}</h2>
         <div>
@@ -222,12 +240,19 @@ const TaskDetail = () => {
           >
             Back to Tasks
           </Link>
-          <Link to={`/tasks/${taskId}/edit`} className="btn btn-warning me-2">
-            Edit Task
-          </Link>
-          <button onClick={handleDeleteTask} className="btn btn-danger">
-            Delete Task
-          </button>
+          {user && task.project?.owner_id === user.id && (
+            <>
+              <Link
+                to={`/tasks/${taskId}/edit`}
+                className="btn btn-warning me-2"
+              >
+                Edit Task
+              </Link>
+              <button onClick={handleDeleteTask} className="btn btn-danger">
+                Delete Task
+              </button>
+            </>
+          )}
         </div>
       </div>
 
