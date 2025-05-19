@@ -31,14 +31,12 @@ const TaskForm = () => {
 
         let resolvedProjectId = projectId;
 
-        // If editing, fetch task first to get project_id and assigned info
         if (isEditing) {
           const taskResponse = await axios.get(
             `http://localhost:8000/api/tasks/${taskId}`,
             { headers }
           );
           const task = taskResponse.data.task;
-          console.log("Fetched task:", task);
 
           setFormData({
             title: task.title,
@@ -51,10 +49,9 @@ const TaskForm = () => {
             due_time: task.due_time ? task.due_time.slice(0, 16) : "",
           });
 
-          resolvedProjectId = task.project_id; // Use actual project_id from task
+          resolvedProjectId = task.project_id;
         }
 
-        // Fetch project members
         if (resolvedProjectId) {
           const membersResponse = await axios.get(
             `http://localhost:8000/api/projects/${resolvedProjectId}/members`,
@@ -63,7 +60,6 @@ const TaskForm = () => {
           setUsers(membersResponse.data.members);
         }
 
-        // Fetch all projects owned by the user
         const projectsResponse = await axios.get(
           "http://localhost:8000/api/projects",
           { headers }
@@ -105,7 +101,6 @@ const TaskForm = () => {
         },
       });
 
-      // Navigate back to the project's task list
       navigate(`/projects/${formData.project_id}/tasks`);
     } catch (err) {
       setError("Failed to save task");
@@ -132,169 +127,183 @@ const TaskForm = () => {
     );
 
   return (
-    <div className="task-form">
-      <h2>{isEditing ? "Edit Task" : "Create New Task"}</h2>
+    <div className="container-fluid">
+      <div className="row">
+        {/* Sidebar placeholder if needed */}
+        <div className="col-md-3 d-none d-md-block"></div>
 
-      {error && <div className="alert alert-danger">{error}</div>}
+        {/* Task form container */}
+        <div className="col-md-9 ms-auto mt-4">
+          <div className="card shadow p-4">
+            <h2 className="mb-4">
+              {isEditing ? "Edit Task" : "Create New Task"}
+            </h2>
 
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label htmlFor="title" className="form-label">
-            Task Title
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-          />
-        </div>
+            {error && <div className="alert alert-danger">{error}</div>}
 
-        <div className="mb-3">
-          <label htmlFor="description" className="form-label">
-            Description
-          </label>
-          <textarea
-            className="form-control"
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows={3}
-          />
-        </div>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="title" className="form-label">
+                  Task Title
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-        <div className="mb-3">
-          <label htmlFor="project_id" className="form-label">
-            Project
-          </label>
-          <select
-            className="form-select"
-            id="project_id"
-            name="project_id"
-            value={formData.project_id}
-            onChange={handleChange}
-            required
-            disabled={!!projectId}
-          >
-            <option value="">Select Project</option>
-            {projects.map((project) => (
-              <option key={project.id} value={project.id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
-        </div>
+              <div className="mb-3">
+                <label htmlFor="description" className="form-label">
+                  Description
+                </label>
+                <textarea
+                  className="form-control"
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows={3}
+                />
+              </div>
 
-        <div className="row mb-3">
-          <div className="col">
-            <label htmlFor="status" className="form-label">
-              Status
-            </label>
-            <select
-              className="form-select"
-              id="status"
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              required
-              disabled={formData.status === "completed"}
-            >
-              <option value="todo">To Do</option>
-              <option value="in_progress">In Progress</option>
-              <option value="review">Review</option>
-              <option value="completed">Completed</option>
-            </select>
+              <div className="mb-3">
+                <label htmlFor="project_id" className="form-label">
+                  Project
+                </label>
+                <select
+                  className="form-select"
+                  id="project_id"
+                  name="project_id"
+                  value={formData.project_id}
+                  onChange={handleChange}
+                  required
+                  disabled={!!projectId}
+                >
+                  <option value="">Select Project</option>
+                  {projects.map((project) => (
+                    <option key={project.id} value={project.id}>
+                      {project.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="row mb-3">
+                <div className="col">
+                  <label htmlFor="status" className="form-label">
+                    Status
+                  </label>
+                  <select
+                    className="form-select"
+                    id="status"
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    required
+                    disabled={formData.status === "completed"}
+                  >
+                    <option value="todo">To Do</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="review">Review</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+
+                <div className="col">
+                  <label htmlFor="priority" className="form-label">
+                    Priority
+                  </label>
+                  <select
+                    className="form-select"
+                    id="priority"
+                    name="priority"
+                    value={formData.priority}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="row mb-3">
+                <div className="col">
+                  <label htmlFor="assigned_to" className="form-label">
+                    Assign To
+                  </label>
+                  <select
+                    className="form-select"
+                    id="assigned_to"
+                    name="assigned_to"
+                    value={formData.assigned_to}
+                    onChange={handleChange}
+                  >
+                    <option value="">Unassigned</option>
+                    {users.map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="col">
+                  <label htmlFor="start_time" className="form-label">
+                    Start Time
+                  </label>
+                  <input
+                    type="datetime-local"
+                    className="form-control"
+                    id="start_time"
+                    name="start_time"
+                    value={formData.start_time}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="row mb-3">
+                <div className="col">
+                  <label htmlFor="due_time" className="form-label">
+                    Due Time
+                  </label>
+                  <input
+                    type="datetime-local"
+                    className="form-control"
+                    id="due_time"
+                    name="due_time"
+                    value={formData.due_time}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="d-flex gap-2">
+                <button type="submit" className="btn btn-primary">
+                  {isEditing ? "Update Task" : "Create Task"}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() =>
+                    navigate(`/projects/${formData.project_id}/tasks`)
+                  }
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
-
-          <div className="col">
-            <label htmlFor="priority" className="form-label">
-              Priority
-            </label>
-            <select
-              className="form-select"
-              id="priority"
-              name="priority"
-              value={formData.priority}
-              onChange={handleChange}
-              required
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-              <option value="urgent">Urgent</option>
-            </select>
-          </div>
         </div>
-
-        <div className="row mb-3">
-          <div className="col">
-            <label htmlFor="assigned_to" className="form-label">
-              Assign To
-            </label>
-            <select
-              className="form-select"
-              id="assigned_to"
-              name="assigned_to"
-              value={formData.assigned_to}
-              onChange={handleChange}
-            >
-              <option value="">Unassigned</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="col">
-            <label htmlFor="start_time" className="form-label">
-              Start Time
-            </label>
-            <input
-              type="datetime-local"
-              className="form-control"
-              id="start_time"
-              name="start_time"
-              value={formData.start_time}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className="row mb-3">
-          <div className="col">
-            <label htmlFor="due_time" className="form-label">
-              Due Time
-            </label>
-            <input
-              type="datetime-local"
-              className="form-control"
-              id="due_time"
-              name="due_time"
-              value={formData.due_time}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className="d-flex gap-2">
-          <button type="submit" className="btn btn-primary">
-            {isEditing ? "Update Task" : "Create Task"}
-          </button>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => navigate(`/projects/${formData.project_id}/tasks`)}
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 };
