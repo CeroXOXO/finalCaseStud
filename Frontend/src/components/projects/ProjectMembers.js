@@ -24,6 +24,7 @@ const ProjectMembers = () => {
           axios.get(`http://localhost:8000/api/projects/${id}/members`, {
             headers,
           }),
+          
           axios.get("http://localhost:8000/api/users", { headers }),
           axios.get(`http://localhost:8000/api/projects/${id}`, { headers }),
         ]);
